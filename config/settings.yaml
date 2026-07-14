@@ -1,0 +1,38 @@
+# Intraday Trading Bot Default Configuration (v1.0)
+version: "v1.0"
+
+database:
+  url: "http://localhost:54321" # Local Supabase CLI address or actual URL
+  key: "anon-public-key"
+  pool_size: 5
+
+redis:
+  host: "localhost"
+  port: 6379
+  db: 0
+  password: null
+
+risk:
+  max_daily_loss_pct: 5.0      # Kill-switch Daily Loss limit
+  max_per_trade_risk_pct: 1.0  # 1% per trade risk limit
+  kelly_fraction: 0.5          # Fractional Kelly
+  max_equity_exposure_pct: 20.0
+
+trading:
+  symbols:
+    - "RELIANCE"
+    - "TCS"
+    - "INFY"
+    - "HDFCBANK"
+  universe_scan:
+    min_spread_pct: 0.02
+    min_volume_rvol: 1.5
+    min_atr_pct: 0.5
+  signal_persistence_ticks: 3
+  paper_trading_active: true
+
+# Extra parameters for ensemble models & custom calibration
+extra:
+  tema_period: 20
+  linreg_period: 14
+  llm_bias_weight: 0.2

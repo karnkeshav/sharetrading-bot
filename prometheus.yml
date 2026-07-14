@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 5s # Scrape metrics frequently for high-fidelity trading metrics
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: "trading_bot"
+    static_configs:
+      - targets: ["executor:8000"]

@@ -1,0 +1,21 @@
+# Python caching
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environments
+.env
+.venv
+venv/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+
+# Local configuration overrides
+config/settings.local.yaml
