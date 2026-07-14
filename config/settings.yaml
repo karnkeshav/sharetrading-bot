@@ -43,3 +43,8 @@ model:
   slippage_pct: 0.05
   brokerage_pct: 0.03
   taxes_pct: 0.06
+
+broker:
+  api_key: "mock_api_key"
+  api_secret: "mock_api_secret"
+  access_token: null

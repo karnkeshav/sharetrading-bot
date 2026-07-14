@@ -41,6 +41,11 @@ class ModelConfig(BaseModel):
     brokerage_pct: float = Field(0.03, description="Brokerage percentage per trade")
     taxes_pct: float = Field(0.06, description="Taxes and STT percentage per trade")
 
+class BrokerConfig(BaseModel):
+    api_key: str = Field("mock_api_key", description="Zerodha Kite API Key")
+    api_secret: str = Field("mock_api_secret", description="Zerodha Kite API Secret")
+    access_token: Optional[str] = Field(None, description="Zerodha Kite Access Token")
+
 class AppConfig(BaseModel):
     version: str = Field("v1.0", description="Configuration version string")
     database: DatabaseConfig
@@ -48,3 +53,4 @@ class AppConfig(BaseModel):
     risk: RiskConfig
     trading: TradingConfig
     model: ModelConfig = Field(default_factory=ModelConfig, description="Logic engine model configuration")
+    broker: BrokerConfig = Field(default_factory=BrokerConfig, description="Kite Connect credentials configuration")

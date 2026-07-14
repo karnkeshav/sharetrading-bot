@@ -5,3 +5,4 @@ pyyaml>=6.0.1
 prometheus-client>=0.20.0
 structlog>=24.1.0
 hiredis>=2.3.2
+kiteconnect>=4.2.0

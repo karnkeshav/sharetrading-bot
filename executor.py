@@ -23,6 +23,7 @@ from core.state_persistence import (
     load_all_active_states,
     save_symbol_state
 )
+from core.broker import KiteBroker
 
 logger = get_logger(__name__)
 
@@ -47,6 +48,9 @@ class TradingExecutor:
             db=self.config.redis.db,
             password=self.config.redis.password
         )
+        
+        # Setup Broker Client
+        self.broker = KiteBroker()
         
         # Synchronize configuration metadata into the database
         await self.sync_config_version()
@@ -166,36 +170,12 @@ class TradingExecutor:
                 return
 
             for symbol, state in list(self.active_positions.items()):
-                logger.info("flattening_symbol", symbol=symbol, current_qty=state.position_qty)
-                
-                is_paper = await self.is_paper_trading()
-                exit_price = state.avg_entry_price * 0.99  # Mock slippage
-                pnl = (exit_price - state.avg_entry_price) * state.position_qty
-                if state.state == "SHORT":
-                    pnl = (state.avg_entry_price - exit_price) * state.position_qty
-
-                if is_paper:
-                    logger.info("paper_market_exit_order_executed", symbol=symbol, qty=state.position_qty, exit_price=exit_price, pnl=pnl)
-                else:
-                    logger.warn("LIVE_MARKET_EXIT_ORDER_SENT_TO_BROKER", symbol=symbol, qty=state.position_qty, exit_price=exit_price, pnl=pnl)
-
-                # Persist flat state in Supabase
-                state.state = "FLAT"
-                state.position_qty = 0.0
-                state.stop_loss_price = 0.0
-                state.take_profit_price = 0.0
-                state.last_tick_time = datetime.now(timezone.utc)
-                state.metadata["flatten_reason"] = reason
-                state.metadata["flatten_time"] = datetime.now(timezone.utc).isoformat()
-                
-                success = await save_symbol_state(state)
+                success = await self.broker.flatten_symbol(symbol, state, reason)
                 if success:
-                    # Update local state
                     self.active_positions.pop(symbol, None)
                     ACTIVE_POSITIONS.labels(symbol=symbol).set(0.0)
-                    logger.info("flatten_persisted_successfully", symbol=symbol)
                 else:
-                    logger.error("failed_to_persist_flatten_state", symbol=symbol)
+                    logger.error("failed_to_flatten_symbol_at_executor", symbol=symbol)
             
             logger.info("flatten_all_operation_completed")
         except Exception as e:
