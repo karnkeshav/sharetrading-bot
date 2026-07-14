@@ -29,10 +29,22 @@ class TradingConfig(BaseModel):
     signal_persistence_ticks: int = Field(3, description="Number of ticks/bar close to verify signal persistence")
     paper_trading_active: bool = Field(True, description="Toggle between live paper trading and real brokerage trading")
 
+class ModelConfig(BaseModel):
+    tema_period: int = Field(20, description="TEMA period")
+    linreg_period: int = Field(14, description="Linear Regression slope period")
+    weight_tema: float = Field(0.4, description="TEMA weight in composite score")
+    weight_linreg: float = Field(0.4, description="Linear Regression slope weight in composite score")
+    weight_llm: float = Field(0.2, description="LLM bias weight in composite score")
+    platt_a: float = Field(-1.5, description="Platt coefficient A")
+    platt_b: float = Field(0.1, description="Platt coefficient B")
+    slippage_pct: float = Field(0.05, description="Slippage percentage per trade")
+    brokerage_pct: float = Field(0.03, description="Brokerage percentage per trade")
+    taxes_pct: float = Field(0.06, description="Taxes and STT percentage per trade")
+
 class AppConfig(BaseModel):
     version: str = Field("v1.0", description="Configuration version string")
     database: DatabaseConfig
     redis: RedisConfig
     risk: RiskConfig
     trading: TradingConfig
-    extra: Dict[str, Any] = Field(default_factory=dict, description="Arbitrary extra params for ensemble model")
+    model: ModelConfig = Field(default_factory=ModelConfig, description="Logic engine model configuration")

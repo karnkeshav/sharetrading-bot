@@ -31,8 +31,15 @@ trading:
   signal_persistence_ticks: 3
   paper_trading_active: true
 
-# Extra parameters for ensemble models & custom calibration
-extra:
+# Logic engine model & costs configuration
+model:
   tema_period: 20
   linreg_period: 14
-  llm_bias_weight: 0.2
+  weight_tema: 0.4
+  weight_linreg: 0.4
+  weight_llm: 0.2
+  platt_a: -1.5
+  platt_b: 0.1
+  slippage_pct: 0.05
+  brokerage_pct: 0.03
+  taxes_pct: 0.06
